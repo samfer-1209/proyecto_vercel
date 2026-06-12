@@ -1,11 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "taskhub/wsgi.py",
-      "use": "@vercel/python"
+  "functions": {
+    "taskhub/wsgi.py": {
+      "runtime": "@vercel/python"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/(.*)",
