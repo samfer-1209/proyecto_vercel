@@ -1,13 +1,9 @@
 {
-  "functions": {
-    "taskhub/wsgi.py": {
-      "runtime": "@vercel/python"
-    }
-  },
+  "version": 2,
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "taskhub/wsgi.py"
+      "dest": "api/index.py"
     }
   ]
 }
