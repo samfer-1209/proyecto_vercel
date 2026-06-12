@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% block title %}Editar rol - TaskHub{% endblock %}
+{% block page_title %}Editar rol de usuario{% endblock %}
+{% block content %}
+<div class="form-panel">
+    <h3>{{ usuario.username }}</h3>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_rol">Rol</label>
+            {{ form.rol }}
+            {% if form.rol.errors %}
+                <div class="field-error">{{ form.rol.errors|striptags }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="button button-primary">Guardar</button>
+        <a class="button button-secondary" href="{% url 'user_list' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block title %}Proyectos - TaskHub{% endblock %}
+{% block page_title %}Proyectos{% endblock %}
+{% block content %}
+<div class="section-panel section-actions">
+    <form class="filter-form" method="get">
+        <input type="text" name="search" placeholder="Buscar proyecto" value="{{ search }}" />
+        <select name="estado">
+            <option value="">Todos los estados</option>
+            <option value="Pendiente" {% if estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+            <option value="En progreso" {% if estado == 'En progreso' %}selected{% endif %}>En progreso</option>
+            <option value="Completada" {% if estado == 'Completada' %}selected{% endif %}>Completada</option>
+        </select>
+        <button class="button button-primary">Filtrar</button>
+    </form>
+    <a class="button button-primary" href="{% url 'project_create' %}">Crear proyecto</a>
+</div>
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr><th>Nombre</th><th>Estado</th><th>Propietario</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            {% for proyecto in proyectos %}
+                <tr>
+                    <td><a href="{% url 'project_detail' proyecto.id %}">{{ proyecto.nombre }}</a></td>
+                    <td>{{ proyecto.estado }}</td>
+                    <td>{{ proyecto.propietario_id }}</td>
+                    <td>
+                        <a class="button button-secondary" href="{% url 'project_edit' proyecto.id %}">Editar</a>
+                        <a class="button button-danger" href="{% url 'project_delete' proyecto.id %}">Eliminar</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">No se encontraron proyectos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard - TaskHub{% endblock %}
+{% block page_title %}
+    {% if is_admin %}
+        Panel de administración
+    {% else %}
+        Dashboard
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+{% if is_admin %}
+    <!-- PANEL DE ADMINISTRACIÓN -->
+    <div class="admin-panel">
+        <div class="panel-header">
+            <h2>📊 Estadísticas del Sistema</h2>
+            <p>Resumen general de proyectos, tareas y usuarios</p>
+        </div>
+
+        <!-- Fila 1: Proyectos -->
+        <div class="dashboard-grid">
+            <article class="card card-primary">
+                <h3>Total de proyectos</h3>
+                <p class="stat">{{ proyectos_total }}</p>
+            </article>
+            <article class="card card-success">
+                <h3>Proyectos activos</h3>
+                <p class="stat">{{ proyectos_activos }}</p>
+            </article>
+            <article class="card card-warning">
+                <h3>Proyectos completados</h3>
+                <p class="stat">{{ proyectos_completados }}</p>
+            </article>
+        </div>
+
+        <!-- Fila 2: Tareas -->
+        <div class="dashboard-grid">
+            <article class="card card-secondary">
+                <h3>Total de tareas</h3>
+                <p class="stat">{{ tareas_total }}</p>
+            </article>
+            <article class="card card-secondary">
+                <h3>Tareas pendientes</h3>
+                <p class="stat">{{ tareas_pendientes }}</p>
+            </article>
+            <article class="card card-secondary">
+                <h3>En progreso</h3>
+                <p class="stat">{{ tareas_en_progreso }}</p>
+            </article>
+            <article class="card card-success">
+                <h3>Tareas completadas</h3>
+                <p class="stat">{{ tareas_completadas }}</p>
+            </article>
+            <article class="card card-success">
+                <h3>Tareas vencidas</h3>
+                <p class="stat">{{ tareas_vencidas }}</p>
+            </article>
+        </div>
+
+        <!-- Fila 3: Usuarios -->
+        <div class="dashboard-grid">
+            <article class="card card-primary">
+                <h3>Usuarios activos</h3>
+                <p class="stat">{{ usuarios_activos }}</p>
+            </article>
+            <article class="card card-warning">
+                <h3>Administradores</h3>
+                <p class="stat">{{ admins_count }}</p>
+            </article>
+        </div>
+    </div>
+
+    <!-- OPCIONES ADMINISTRATIVAS -->
+    <div class="admin-options">
+        <div class="section-panel">
+            <div class="section-header">
+                <h2>🔧 Opciones administrativas</h2>
+            </div>
+            <div class="options-grid">
+                <a href="{% url 'user_list' %}" class="option-card">
+                    <span class="option-icon">👥</span>
+                    <h3>Gestionar usuarios</h3>
+                    <p>Ver y modificar roles de usuarios</p>
+                </a>
+                <a href="{% url 'project_list' %}" class="option-card">
+                    <span class="option-icon">📁</span>
+                    <h3>Ver todos los proyectos</h3>
+                    <p>Acceder a todos los proyectos del sistema</p>
+                </a>
+                <a href="{% url 'task_list' %}" class="option-card">
+                    <span class="option-icon">✅</span>
+                    <h3>Ver todas las tareas</h3>
+                    <p>Acceder a todas las tareas del sistema</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimos usuarios registrados -->
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>📝 Últimos usuarios registrados</h2>
+            <a href="{% url 'user_list' %}" class="button button-secondary">Ver todos</a>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre completo</th>
+                        <th>Rol</th>
+                        <th>Fecha registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios_recientes %}
+                        <tr>
+                            <td>{{ usuario.username }}</td>
+                            <td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
+                            <td>
+                                {% if usuario.is_staff %}
+                                    <span class="badge badge-admin">Administrador</span>
+                                {% else %}
+                                    <span class="badge badge-user">Usuario</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ usuario.date_joined|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4">No hay usuarios registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Proyectos recientes -->
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>📂 Proyectos recientes</h2>
+            <a href="{% url 'project_list' %}" class="button button-secondary">Ver todos</a>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Propietario</th>
+                        <th>Estado</th>
+                        <th>Creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proyecto in proyectos_recientes %}
+                        <tr>
+                            <td><a href="{% url 'project_detail' proyecto.id %}">{{ proyecto.nombre }}</a></td>
+                            <td>{{ proyecto.propietario_id }}</td>
+                            <td>{{ proyecto.estado }}</td>
+                            <td>{{ proyecto.fecha_creacion }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4">No hay proyectos creados aún.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% else %}
+    <!-- PANEL DE USUARIO NORMAL -->
+    <div class="dashboard-grid">
+        <article class="card card-primary">
+            <h3>Total de proyectos</h3>
+            <p class="stat">{{ proyectos_total }}</p>
+        </article>
+        <article class="card card-secondary">
+            <h3>Total de tareas</h3>
+            <p class="stat">{{ tareas_total }}</p>
+        </article>
+        <article class="card card-success">
+            <h3>Tareas completadas</h3>
+            <p class="stat">{{ tareas_completadas }}</p>
+        </article>
+        <article class="card card-warning">
+            <h3>Tareas vencidas</h3>
+            <p class="stat">{{ tareas_vencidas }}</p>
+        </article>
+    </div>
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>Proyectos recientes</h2>
+            <a href="{% url 'project_list' %}" class="button button-secondary">Ver todos</a>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>Nombre</th><th>Estado</th><th>Creación</th></tr>
+                </thead>
+                <tbody>
+                    {% for proyecto in proyectos_recientes %}
+                        <tr>
+                            <td><a href="{% url 'project_detail' proyecto.id %}">{{ proyecto.nombre }}</a></td>
+                            <td>{{ proyecto.estado }}</td>
+                            <td>{{ proyecto.fecha_creacion }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="3">No hay proyectos creados aún.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>Tareas asignadas</h2>
+            <a href="{% url 'task_list' %}" class="button button-secondary">Ver tareas</a>
+        </div>
+        <div class="task-list">
+            {% for tarea in tareas_propia %}
+                <article class="task-card">
+                    <strong>{{ tarea.titulo }}</strong>
+                    <p>{{ tarea.descripcion|truncatechars:80 }}</p>
+                    <span class="badge">{{ tarea.estado }}</span>
+                </article>
+            {% empty %}
+                <p>No hay tareas asignadas todavía.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

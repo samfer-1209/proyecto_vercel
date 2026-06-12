@@ -1,0 +1,5 @@
+Django==5.2
+firebase-admin>=7.0.0
+python-dotenv>=1.0.0
+gunicorn>=21.0.0
+whitenoise>=6.5.0

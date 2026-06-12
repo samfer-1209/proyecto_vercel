@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ tarea.titulo }} - TaskHub{% endblock %}
+{% block page_title %}Detalle de tarea{% endblock %}
+{% block content %}
+<div class="section-panel">
+    <div class="project-summary">
+        <div>
+            <h2>{{ tarea.titulo }}</h2>
+            <p>{{ tarea.descripcion }}</p>
+            <p><strong>Proyecto:</strong> {{ proyecto.nombre if proyecto else 'Sin proyecto' }}</p>
+            <p><strong>Prioridad:</strong> {{ tarea.prioridad }} • <strong>Estado:</strong> {{ tarea.estado }}</p>
+            <p><strong>Asignado a:</strong> {{ usuario_asignado.nombre if usuario_asignado else 'Sin asignar' }}</p>
+        </div>
+        <div class="button-row">
+            <a class="button button-secondary" href="{% url 'task_edit' tarea.id %}">Editar</a>
+            <a class="button button-danger" href="{% url 'task_delete' tarea.id %}">Eliminar</a>
+        </div>
+    </div>
+</div>
+<div class="section-panel">
+    <div class="section-header">
+        <h2>Comentarios</h2>
+    </div>
+    <div class="comment-box">
+        {% for comment in comments %}
+            <article class="comment-item">
+                <p>{{ comment.texto }}</p>
+                <span class="comment-meta">Usuario {{ comment.autor_id }} • {{ comment.fecha_creacion }}</span>
+            </article>
+        {% empty %}
+            <p>No hay comentarios aún.</p>
+        {% endfor %}
+    </div>
+    <div class="form-panel">
+        <form method="post" action="{% url 'add_comment' tarea.id %}">
+            {% csrf_token %}
+            {{ form.texto }}
+            <button type="submit" class="button button-primary">Agregar comentario</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

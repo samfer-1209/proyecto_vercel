@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+{% block title %}Cerrar sesión - TaskHub{% endblock %}
+{% block page_title %}Sesión cerrada{% endblock %}
+{% block content %}
+<div class="section-panel">
+    <p>Has cerrado sesión correctamente.</p>
+    <a class="button button-primary" href="{% url 'login' %}">Iniciar sesión de nuevo</a>
+</div>
+{% endblock %}

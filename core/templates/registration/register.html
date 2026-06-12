@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% block title %}Registro - TaskHub{% endblock %}
+{% block page_title %}Registro de usuario{% endblock %}
+{% block content %}
+<div class="form-panel auth-panel">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-error">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="button button-primary">Registrar</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+</div>
+{% endblock %}

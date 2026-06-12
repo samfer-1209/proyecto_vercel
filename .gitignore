@@ -1,0 +1,42 @@
+/.venv
+.env
+firebase_service_account.json
+*.pyc
+__pycache__/
+/.pytest_cache
+/.mypy_cache
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.env
+env/
+venv/
+.idea/
+.vscode/
+.DS_Store
+*.log
+*.pot
+*.mo
+*.db
+/firebase_service_account.json
+.env
+*.py[cod]
+*~
+*.swp
+*.swo
+
+# Django static files
+staticfiles/
+
+# Vercel build output
+.vercel/
+
+# Mac
+.DS_Store
+
+# Node modules
+node_modules/
