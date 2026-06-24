@@ -58,9 +58,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "taskhub.wsgi.application"
 
-# En producción (Vercel), usa una BD en memoria
-# En desarrollo, usa SQLite local
+# Configuración de base de datos: SQLite en desarrollo, PostgreSQL en producción
 if DEBUG:
+    # Desarrollo: SQLite local
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -68,13 +68,32 @@ if DEBUG:
         }
     }
 else:
-    # Producción: BD en memoria (Firestore maneja el almacenamiento)
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": ":memory:",
+    # Producción: PostgreSQL (en Vercel)
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    if DATABASE_URL:
+        # Usar PostgreSQL si está configurado
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": os.getenv("DB_NAME", "postgres"),
+                "USER": os.getenv("DB_USER", "postgres"),
+                "PASSWORD": os.getenv("DB_PASSWORD", ""),
+                "HOST": os.getenv("DB_HOST", "localhost"),
+                "PORT": os.getenv("DB_PORT", "5432"),
+                "CONN_MAX_AGE": 600,
+                "OPTIONS": {
+                    "sslmode": "require",
+                },
+            }
         }
-    }
+    else:
+        # Fallback: BD en memoria si no está configurada
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": ":memory:",
+            }
+        }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
