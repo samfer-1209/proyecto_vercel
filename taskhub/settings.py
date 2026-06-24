@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -7,7 +8,12 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-change-me")
-DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
+VERCEL = os.getenv("VERCEL", "false").lower() in ("1", "true")
+DJANGO_DEBUG = os.getenv("DJANGO_DEBUG")
+if DJANGO_DEBUG is None:
+    DEBUG = not VERCEL
+else:
+    DEBUG = DJANGO_DEBUG == "True"
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
@@ -68,10 +74,27 @@ if DEBUG:
         }
     }
 else:
-    # Producción: PostgreSQL (en Vercel)
+    def _parse_database_url(url: str):
+        parsed = urlparse(url)
+        if parsed.scheme not in {"postgres", "postgresql"}:
+            raise ValueError("DATABASE_URL debe ser PostgreSQL")
+        return {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": parsed.path.lstrip("/"),
+            "USER": parsed.username or "",
+            "PASSWORD": parsed.password or "",
+            "HOST": parsed.hostname or "",
+            "PORT": str(parsed.port or "5432"),
+            "CONN_MAX_AGE": 600,
+            "OPTIONS": {
+                "sslmode": "require",
+            },
+        }
+
     DATABASE_URL = os.getenv("DATABASE_URL")
     if DATABASE_URL:
-        # Usar PostgreSQL si está configurado
+        DATABASES = {"default": _parse_database_url(DATABASE_URL)}
+    elif os.getenv("DB_HOST"):
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.postgresql",
@@ -87,7 +110,6 @@ else:
             }
         }
     else:
-        # Fallback: BD en memoria si no está configurada
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
